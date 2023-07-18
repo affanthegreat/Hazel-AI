@@ -5,6 +5,8 @@ redis==4.6.0  # https://github.com/redis/redis-py
 celery==5.3.1  # pyup: < 6.0  # https://github.com/celery/celery
 django-celery-beat==2.5.0  # https://github.com/celery/django-celery-beat
 uvicorn[standard]==0.22.0  # https://github.com/encode/uvicorn
+bertopic=0.15.0
+requests
 
 # Django
 # ------------------------------------------------------------------------------
