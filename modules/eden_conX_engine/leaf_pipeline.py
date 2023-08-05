@@ -38,7 +38,7 @@ class CONX_LEAF_ML_Pipeline():
         response_data = {
             'topic_id': int(possible_topics),
             'cluster_name': cluster_names[0],
-            'sentiment_value': int(sentiment_dict['sentiment_value']),
+            'sentiment_value': float(sentiment_dict['sentiment_value']),
             'emotion_state': sentiment_dict['emotional_state']
         }
         return response_data
@@ -48,7 +48,7 @@ class CONX_LEAF_ML_Pipeline():
         logging.info("-> Starting Comment Text Workflow.")
         sentiment_dict = self.start_sentiment_analyser(text_data)
         response_data = {
-            'sentiment_value': int(sentiment_dict['sentiment_value']),
+            'sentiment_value': float(sentiment_dict['sentiment_value']),
             'emotion_state': sentiment_dict['emotional_state']
         }
         return response_data

@@ -12,7 +12,7 @@ class HazelSentimentAnalyser():
         self.meta()
         self.sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
         self.emotion_pipeline = pipeline("text-classification", model='bhadresh-savani/distilbert-base-uncased-emotion')
-        logging.info("Hazel Sentiment Analyser {self.VERSIOn}")
+        logging.info(f"Hazel Sentiment Analyser {self.VERSION}")
 
 
     def generate_sentiment_value(self,text):

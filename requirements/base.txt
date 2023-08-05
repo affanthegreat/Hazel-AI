@@ -9,9 +9,9 @@ bertopic==0.15.0
 requests==2.31.0
 transformers==4.30.2
 emoji==0.6.0
-dataset=2.14.3
-tensorflow_hub=0.14.0
-tensorflow=2.13.0
+datasets==2.14.3
+tensorflow_hub==0.14.0
+tensorflow==2.13.0
 # Django
 # ------------------------------------------------------------------------------
 django==4.2.3  # pyup: < 5.0  # https://www.djangoproject.com/
