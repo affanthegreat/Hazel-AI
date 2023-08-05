@@ -3,4 +3,5 @@ from django.apps import AppConfig
 
 class HazelAilibConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "hazel_AIlib"
+    label = "hazel_AIlib"
+    name = "modules." + label

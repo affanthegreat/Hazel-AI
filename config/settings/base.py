@@ -4,7 +4,12 @@ Base settings to build other settings files upon.
 from pathlib import Path
 
 import environ
+import sys
+import os
+import warnings
 
+warnings.filterwarnings("ignore", message=".*The 'nopython' keyword.*")
+warnings.filterwarnings("ignore", message=".* This TensorFlow binary")
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # hazel_ai/
 APPS_DIR = BASE_DIR / "hazel_ai"
@@ -45,15 +50,25 @@ LOCALE_PATHS = [str(BASE_DIR / "locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
+# DATABASES = {
+#     "default": env.db(
+#         "DATABASE_URL",
+#         default="postgres://localhost/hazel_ai",
+#     ),
+# }
+# DATABASES["default"]["ATOMIC_REQUESTS"] = True
+# # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
+# DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+PROJECT_ROOT = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'modules'))
+
+
 DATABASES = {
-    "default": env.db(
-        "DATABASE_URL",
-        default="postgres://localhost/hazel_ai",
-    ),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': PROJECT_ROOT+ '/db.sqlite3',
+    }
 }
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
-# https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # URLS
 # ------------------------------------------------------------------------------
@@ -68,7 +83,6 @@ DJANGO_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # "django.contrib.humanize", # Handy template tags
@@ -90,6 +104,10 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "hazel_ai.users",
+    "modules.eden_conX_engine",
+    "modules.eden_experience_engine",
+    "modules.hazel_AIlib",
+    "modules.hazelcommunicator"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -263,39 +281,39 @@ LOGGING = {
 }
 
 # Celery
-# ------------------------------------------------------------------------------
-if USE_TZ:
-    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
-    CELERY_TIMEZONE = TIME_ZONE
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
-CELERY_BROKER_URL = env("CELERY_BROKER_URL")
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_backend
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-extended
-CELERY_RESULT_EXTENDED = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-backend-always-retry
-# https://github.com/celery/celery/pull/6122
-CELERY_RESULT_BACKEND_ALWAYS_RETRY = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-backend-max-retries
-CELERY_RESULT_BACKEND_MAX_RETRIES = 10
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-accept_content
-CELERY_ACCEPT_CONTENT = ["json"]
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-task_serializer
-CELERY_TASK_SERIALIZER = "json"
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_serializer
-CELERY_RESULT_SERIALIZER = "json"
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-time-limit
-# TODO: set to whatever value is adequate in your circumstances
-CELERY_TASK_TIME_LIMIT = 5 * 60
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-soft-time-limit
-# TODO: set to whatever value is adequate in your circumstances
-CELERY_TASK_SOFT_TIME_LIMIT = 60
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#worker-send-task-events
-CELERY_WORKER_SEND_TASK_EVENTS = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-task_send_sent_event
-CELERY_TASK_SEND_SENT_EVENT = True
+# # ------------------------------------------------------------------------------
+# if USE_TZ:
+#     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
+#     CELERY_TIMEZONE = TIME_ZONE
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
+# CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_backend
+# CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-extended
+# CELERY_RESULT_EXTENDED = True
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-backend-always-retry
+# # https://github.com/celery/celery/pull/6122
+# CELERY_RESULT_BACKEND_ALWAYS_RETRY = True
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#result-backend-max-retries
+# CELERY_RESULT_BACKEND_MAX_RETRIES = 10
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-accept_content
+# CELERY_ACCEPT_CONTENT = ["json"]
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-task_serializer
+# CELERY_TASK_SERIALIZER = "json"
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_serializer
+# CELERY_RESULT_SERIALIZER = "json"
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-time-limit
+# # TODO: set to whatever value is adequate in your circumstances
+# CELERY_TASK_TIME_LIMIT = 5 * 60
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-soft-time-limit
+# # TODO: set to whatever value is adequate in your circumstances
+# CELERY_TASK_SOFT_TIME_LIMIT = 60
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
+# CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#worker-send-task-events
+# CELERY_WORKER_SEND_TASK_EVENTS = True
+# # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-task_send_sent_event
+# CELERY_TASK_SEND_SENT_EVENT = True
 # django-allauth
 # ------------------------------------------------------------------------------
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)

@@ -4,16 +4,23 @@ from transformers import pipeline
 
 class HazelSentimentAnalyser():
 
+    def meta(self):
+        self.VERSION = 0.5
+    
+
     def __init__(self):
-        self.sentiment_pipeline = pipeline("sentiment-analysis")
+        self.meta()
+        self.sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
         self.emotion_pipeline = pipeline("text-classification", model='bhadresh-savani/distilbert-base-uncased-emotion')
-        logging.info("Hazel Sentiment Analyser v1")
+        logging.info("Hazel Sentiment Analyser {self.VERSIOn}")
+
 
     def generate_sentiment_value(self,text):
-        self.sentiment_pipeline([text])
+        return self.sentiment_pipeline([text])
+
 
     def generate_emotion_state(self, text):
-        self.emotion_pipeline(text)
+        return self.emotion_pipeline(text)
 
 
     def process(self,text):

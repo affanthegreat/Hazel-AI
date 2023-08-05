@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import logging
+import pathlib
 
 import nltk
 from nltk.corpus import stopwords
@@ -25,13 +26,14 @@ class HazelTopicModelAgent():
         self.BUILD = "STABLE"
         self.model = None
         self.models_available = ['2Mil_C4', "4Mil_C8_Heavy"]
+
     def init_ntlk(self):
         logging.info("Intializing NLTK.")
         nltk.download('punkt')
         nltk.download('wordnet')
         nltk.download('stopwords')
 
-    def __int__(self, use_heavy_model= False):
+    def __init__(self, use_heavy_model= False):
 
         self.init_ntlk()
         self.get_agent_info()
@@ -70,12 +72,13 @@ class HazelTopicModelAgent():
         else:
             logging.error(f"> Model not found in the default path. Check whether saved model exists at {model_path}")
             return 200
+        
     def get_topic_name(self,text):
         if self.model is not None:
             topics, _ = self.model.transform(text)
             cluster_id = topics[0]
             cluster_name = list(self.model.get_topic_info(cluster_id)['Name'])
-            return cluster_name
+            return (cluster_id,cluster_name)
         else:
             logging.error("> Model is not loaded. Make sure it is loaded or not.")
 
