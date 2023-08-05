@@ -29,14 +29,26 @@ def throw_http_method_not_supported_error():
             content=json.dumps({"status": 200, "message": "HTTP method is not supported."})
         )
 
-
 @csrf_exempt
 def use_leaf_text_pipeline(request):
     if request.method == "POST":
         data = json.loads(request.body)
         valid_fields = ['text_content', 'leaf_id']
         if check_field_validity(valid_fields,data):
-            response = conx_leaf_pipeline.start_text_workflow(data['text_content'])
+            response = conx_leaf_pipeline.start_complete_text_workflow(data['text_content'])
+            return make_response(response)
+        else:
+           return throw_invalid_fields_error()
+    else:
+        return throw_http_method_not_supported_error()
+    
+@csrf_exempt
+def use_comment_text_pipeline(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        valid_fields = ['comment', 'comment_id']
+        if check_field_validity(valid_fields,data):
+            response = conx_leaf_pipeline.start_comment_text_workflow(data['comment'])
             return make_response(response)
         else:
            return throw_invalid_fields_error()
