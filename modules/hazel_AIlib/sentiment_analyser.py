@@ -10,19 +10,27 @@ class HazelSentimentAnalyser():
 
     def __init__(self):
         self.meta()
-        self.sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
-        self.emotion_pipeline = pipeline("text-classification", model='bhadresh-savani/distilbert-base-uncased-emotion')
+        self.text_sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+        self.text_sentiment_pipeline = pipeline("text-classification", model='bhadresh-savani/distilbert-base-uncased-emotion')
+        self.image_to_text_pipeline = pipeline("image-to-text", model="nlpconnect/vit-gpt2-image-captioning")
         logging.info(f"Hazel Sentiment Analyser {self.VERSION}")
 
 
     def generate_sentiment_value(self,text):
-        return self.sentiment_pipeline([text])
+        return self.text_sentiment_pipeline([text])
 
 
     def generate_emotion_state(self, text):
-        return self.emotion_pipeline(text)
+        return self.text_sentiment_pipeline(text)
 
+    def generate_image_caption(self, image_path):
+        return self.image_to_text_pipeline(image_path)
 
+    def image_process(self,image_path):
+        image_caption = self.generate_image_caption(image_path)[0]['generated_text']
+        sentiment_dict = self.process(image_caption)
+        return sentiment_dict
+    
     def process(self,text):
         sentiment_value = self.generate_sentiment_value(text)[0]
         emotional_state = self.generate_emotion_state(text)[0]
@@ -37,3 +45,5 @@ class HazelSentimentAnalyser():
         }
 
         return sentiment_dict
+    
+   
