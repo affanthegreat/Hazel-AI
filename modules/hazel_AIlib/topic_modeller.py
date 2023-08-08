@@ -54,6 +54,18 @@ class HazelTopicModelAgent():
 
         }
         logging.info("-> Default sub-models loaded. ")
+    
+    def load_sub_models_categorizer(self):
+        self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
+        self.umap_model = IncrementalPCA(n_components=None)
+        self.cluster_model = MiniBatchKMeans(n_clusters=64, random_state=0)
+        self.vectorizer_model = OnlineCountVectorizer(stop_words="english", decay=.03)
+        self.representation_model = {
+            "KeyBERT": KeyBERTInspired(),
+            "MMR": MaximalMarginalRelevance(diversity=0.2)
+
+        }
+        logging.info("-> Default sub-models loaded for categorizer.")
 
     def get_new_model_instance(self):
 
@@ -64,6 +76,16 @@ class HazelTopicModelAgent():
                                hdbscan_model=self.cluster_model,
                                verbose=True)
         return topic_model
+    
+    def load_categorizer(self):
+        model_path = f'topic_models/categorizer'
+        if os.path.exists(model_path):
+            self.model = BERTopic.load(model_path,embedding_model= self.embedding_model)
+            return 100
+        else:
+            logging.error(f"> Categorizer Model not found in the default path. Check whether saved model exists at {model_path}")
+            return 200
+    
     def load_model(self):
         model_path = f'topic_models/{self.model_type}'
         if os.path.exists(model_path):
@@ -106,26 +128,5 @@ class HazelTopicModelAgent():
         else:
             logging.error("> Model is not loaded. Make sure it is loaded or not.")
 
-    def fetch_training_data_from_sqlite(self, database, limit):
-        conn = sqlite3.Connection(database + '.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT Text FROM Wiki")
-        return [row[0] for row in cursor.fetchall()[:limit]]
-
-    def generate_dataset(self):
-        lang = 'en'
-        max_limit = 2000000
-        progress_step_count = 2000
-
-        data = load_dataset(f"Cohere/wikipedia-22-12", lang, split='train', streaming=True)
-        documents = []
-        i = 0
-        for doc in data:
-            if i % progress_step_count == 0:
-                print((i / max_limit) * 100, "% Documents fetched.")
-            if i == max_limit:
-                break
-            documents.append(doc['text'])
-            i += 1
-        return documents
+    
 

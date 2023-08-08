@@ -17,10 +17,15 @@ class CONX_LEAF_ML_Pipeline():
         self.topic_model_agent.load_sub_models()
         self.topic_model_agent.load_model()
 
+        self.topic_categorizer = HazelTopicModelAgent()
+        self.topic_categorizer.load_sub_models_categorizer()
+        self.topic_categorizer.load_categorizer()
+
     def start_topic_modelling(self, text_content):
         clean_document = self.topic_model_agent.pre_process_text(text_content)
-        topic_cluster_id, cluster_name = self.topic_model_agent.get_topic_name(clean_document)
-        return topic_cluster_id, cluster_name
+        topic_cluster_id = self.topic_model_agent.get_topic_name(clean_document)
+        topic_category_id, category_name = self.topic_categorizer.get_topic_name(clean_document)
+        return topic_cluster_id, category_name, topic_category_id
 
 
     def start_sentiment_analyser(self,text_content):
@@ -30,7 +35,7 @@ class CONX_LEAF_ML_Pipeline():
         
     def start_complete_text_workflow(self, text_data):
         logging.info("-> Starting Complete Text Workflow.")
-        possible_topics, cluster_names = self.start_topic_modelling(text_data)
+        possible_topics, cluster_names, topic_cluster_id = self.start_topic_modelling(text_data)
         logging.info("-> Topic Modelling complete.")
         sentiment_dict = self.start_sentiment_analyser(text_data)
         logging.info("-> Sentiment Analyser complete.")
@@ -38,6 +43,7 @@ class CONX_LEAF_ML_Pipeline():
         response_data = {
             'topic_id': int(possible_topics),
             'cluster_name': cluster_names[0],
+            'topic_category_id': int(topic_cluster_id),
             'sentiment_value': float(sentiment_dict['sentiment_value']),
             'emotion_state': sentiment_dict['emotional_state']
         }
