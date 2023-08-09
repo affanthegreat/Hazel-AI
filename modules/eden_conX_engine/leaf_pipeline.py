@@ -5,26 +5,32 @@ from modules.hazel_AIlib.topic_modeller import HazelTopicModelAgent
 
 class CONX_LEAF_ML_Pipeline():
     def meta(self):
-        self.VERSION = 0.6
+        self.VERSION = 0.7
 
-    def __init__(self) -> None:
+    def __init__(self,use_pre_trained= True) -> None:
         self.meta()
         self.init_models()
+        self.use_pre_trained_categorizer = use_pre_trained
         logging.info(f"----------CONX LEAF ML Pipeline (HAZEL-AI) {self.VERSION}----------")
 
     def init_models(self):
         self.topic_model_agent = HazelTopicModelAgent(use_heavy_model= True)
         self.topic_model_agent.load_sub_models()
         self.topic_model_agent.load_model()
-
-        self.topic_categorizer = HazelTopicModelAgent()
-        self.topic_categorizer.load_sub_models_categorizer()
-        self.topic_categorizer.load_categorizer()
+        if self.use_pre_trained_categorizer:
+            pass
+        else:
+            self.topic_categorizer = HazelTopicModelAgent()
+            self.topic_categorizer.load_sub_models_categorizer()
+            self.topic_categorizer.load_categorizer()
 
     def start_topic_modelling(self, text_content):
         clean_document = self.topic_model_agent.pre_process_text(text_content)
         topic_cluster_id = self.topic_model_agent.get_topic_name(clean_document)
-        topic_category_id, category_name = self.topic_categorizer.get_topic_name(clean_document)
+        if not self.use_pre_trained_categorizer:
+            topic_category_id, category_name = self.topic_categorizer.get_topic_name(clean_document)
+        else:
+            topic_category_id = self.topic_categorizer.use_pretrained_hugging_face_categorizer(clean_document)
         return topic_cluster_id, category_name, topic_category_id
 
 
