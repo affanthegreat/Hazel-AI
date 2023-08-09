@@ -17,9 +17,7 @@ class CONX_LEAF_ML_Pipeline():
         self.topic_model_agent = HazelTopicModelAgent(use_heavy_model= True)
         self.topic_model_agent.load_sub_models()
         self.topic_model_agent.load_model()
-        if self.use_pre_trained_categorizer:
-            pass
-        else:
+        if not self.use_pre_trained_categorizer:
             self.topic_categorizer = HazelTopicModelAgent()
             self.topic_categorizer.load_sub_models_categorizer()
             self.topic_categorizer.load_categorizer()
