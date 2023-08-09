@@ -4,23 +4,22 @@ from modules.hazel_AIlib.sentiment_analyser import HazelSentimentAnalyser
 from modules.hazel_AIlib.topic_modeller import HazelTopicModelAgent
 
 class CONX_LEAF_ML_Pipeline():
-    def meta(self):
+    def meta(self, use_pre_trained):
         self.VERSION = 0.7
+        self.use_pre_trained_categorizer = use_pre_trained
 
     def __init__(self,use_pre_trained= True) -> None:
-        self.meta()
+        self.meta(use_pre_trained)
         self.init_models()
-        self.use_pre_trained_categorizer = use_pre_trained
         logging.info(f"----------CONX LEAF ML Pipeline (HAZEL-AI) {self.VERSION}----------")
 
     def init_models(self):
         self.topic_model_agent = HazelTopicModelAgent(use_heavy_model= True)
         self.topic_model_agent.load_sub_models()
         self.topic_model_agent.load_model()
-        if not self.use_pre_trained_categorizer:
-            self.topic_categorizer = HazelTopicModelAgent()
-            self.topic_categorizer.load_sub_models_categorizer()
-            self.topic_categorizer.load_categorizer()
+        self.topic_categorizer = HazelTopicModelAgent()
+        self.topic_categorizer.load_sub_models_categorizer()
+        self.topic_categorizer.load_categorizer()
 
     def start_topic_modelling(self, text_content):
         clean_document = self.topic_model_agent.pre_process_text(text_content)
@@ -29,7 +28,7 @@ class CONX_LEAF_ML_Pipeline():
             topic_category_id, category_name = self.topic_categorizer.get_topic_name(clean_document)
         else:
             topic_category_id = self.topic_categorizer.use_pretrained_hugging_face_categorizer(clean_document)
-        return topic_cluster_id, category_name, topic_category_id
+        return (topic_cluster_id, category_name, topic_category_id)
 
 
     def start_sentiment_analyser(self,text_content):

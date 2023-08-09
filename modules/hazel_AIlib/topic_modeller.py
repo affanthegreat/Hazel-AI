@@ -70,15 +70,14 @@ class HazelTopicModelAgent():
         }
         logging.info("-> Default sub-models loaded for categorizer.")
 
-    def load_pre_trained_model(self):
-        self.pre_trained_model_name = f"cardiffnlp/tweet-topic-21-multi"
-        self.pre_trained_model = AutoModelForSequenceClassification.from_pretrained(self.pre_trained_model_name)
-        self.pre_trained_tokenizer = AutoTokenizer.from_pretrained(self.pre_trained_model_name)
+
         
     def predict_category(self, text):
-        
-        tokens = self.pre_trained_tokenizer(text, return_tensors='pt')
-        output = self.pre_trained_model(**tokens)
+        pre_trained_model_name = f"cardiffnlp/tweet-topic-21-multi"
+        pre_trained_model = AutoModelForSequenceClassification.from_pretrained(pre_trained_model_name)
+        pre_trained_tokenizer = AutoTokenizer.from_pretrained(pre_trained_model_name)
+        tokens = pre_trained_tokenizer(text, return_tensors='pt')
+        output = pre_trained_model(**tokens)
         return output
         
     def clean_output_pre_trained(self,output):
@@ -96,7 +95,6 @@ class HazelTopicModelAgent():
             return topic_category_id
 
     def use_pretrained_hugging_face_categorizer(self,text):
-        self.load_pre_trained_model()
         unclean_output =self.predict_category(text)
         topic_category_id = self.clean_output_pre_trained(unclean_output)
         return topic_category_id
