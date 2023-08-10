@@ -24,11 +24,15 @@ class CONX_LEAF_ML_Pipeline():
     def start_topic_modelling(self, text_content):
         clean_document = self.topic_model_agent.pre_process_text(text_content)
         topic_cluster_id = self.topic_model_agent.get_topic_name(clean_document)
+        print("==================================")
+        print(clean_document, topic_cluster_id)
+        print("===================================")
         if not self.use_pre_trained_categorizer:
             topic_category_id, category_name = self.topic_categorizer.get_topic_name(clean_document)
+            return (topic_cluster_id, category_name, topic_category_id)
         else:
             topic_category_id = self.topic_categorizer.use_pretrained_hugging_face_categorizer(clean_document)
-        return (topic_cluster_id, category_name, topic_category_id)
+            return (topic_cluster_id[0],topic_cluster_id[1], topic_category_id)
 
 
     def start_sentiment_analyser(self,text_content):
@@ -38,15 +42,17 @@ class CONX_LEAF_ML_Pipeline():
         
     def start_complete_text_workflow(self, text_data):
         logging.info("-> Starting Complete Text Workflow.")
-        possible_topics, cluster_names, topic_cluster_id = self.start_topic_modelling(text_data)
+        possible_topics, topic_category_name ,topic_category_id = self.start_topic_modelling(text_data)
+        print("==================================")
+        print(possible_topics, topic_category_id)
+        print("===================================")
         logging.info("-> Topic Modelling complete.")
         sentiment_dict = self.start_sentiment_analyser(text_data)
         logging.info("-> Sentiment Analyser complete.")
 
         response_data = {
             'topic_id': int(possible_topics),
-            'cluster_name': cluster_names[0],
-            'topic_category_id': int(topic_cluster_id),
+            'topic_category_id': int(topic_category_id),
             'sentiment_value': float(sentiment_dict['sentiment_value']),
             'emotion_state': sentiment_dict['emotional_state']
         }

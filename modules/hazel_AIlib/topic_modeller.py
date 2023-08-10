@@ -73,11 +73,12 @@ class HazelTopicModelAgent():
 
         
     def predict_category(self, text):
-        pre_trained_model_name = f"cardiffnlp/tweet-topic-21-multi"
-        pre_trained_model = AutoModelForSequenceClassification.from_pretrained(pre_trained_model_name)
-        pre_trained_tokenizer = AutoTokenizer.from_pretrained(pre_trained_model_name)
-        tokens = pre_trained_tokenizer(text, return_tensors='pt')
-        output = pre_trained_model(**tokens)
+        self.pre_trained_model_name = f"cardiffnlp/tweet-topic-21-multi"
+        self.pre_trained_model = AutoModelForSequenceClassification.from_pretrained(self.pre_trained_model_name)
+        self.pre_trained_tokenizer = AutoTokenizer.from_pretrained(self.pre_trained_model_name)
+        print(text)
+        tokens = self.pre_trained_tokenizer(text, return_tensors='pt')
+        output = self.pre_trained_model(**tokens)
         return output
         
     def clean_output_pre_trained(self,output):
@@ -142,6 +143,7 @@ class HazelTopicModelAgent():
             logging.error("> Model is not loaded. Make sure it is loaded or not.")
 
     def pre_process_text(self,documents):
+        documents = [documents]
         clean_documents = []
         lemmatizer = WordNetLemmatizer()
         stop_words = set(stopwords.words('english'))
@@ -157,7 +159,7 @@ class HazelTopicModelAgent():
 
             clean_documents.append(clean_sentences)
 
-        return clean_documents
+        return clean_documents[0]
 
     def get_possible_topics(self, term):
         if self.model is not None:
