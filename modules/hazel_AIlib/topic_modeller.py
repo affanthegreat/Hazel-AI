@@ -21,6 +21,11 @@ from bertopic.representation import KeyBERTInspired, MaximalMarginalRelevance
 from transformers import AutoModelForSequenceClassification, TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer
 
+
+from sklearn.pipeline import make_pipeline
+from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 class HazelTopicModelAgent():
 
     def get_agent_info(self):
@@ -47,7 +52,11 @@ class HazelTopicModelAgent():
             self.model_type = "2Mil_C4"
 
     def load_sub_models(self):
-        self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
+        #self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
+        self.embedding_model = make_pipeline(
+                TfidfVectorizer(),
+                TruncatedSVD(100)
+            )   
         self.umap_model = IncrementalPCA(n_components=256)
         self.cluster_model = MiniBatchKMeans(n_clusters=1024, random_state=0)
         self.vectorizer_model = OnlineCountVectorizer(stop_words="english", decay=.01)
@@ -58,23 +67,10 @@ class HazelTopicModelAgent():
         }
         logging.info("-> Default sub-models loaded. ")
     
-    def load_sub_models_categorizer(self):
-        self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
-        self.umap_model = IncrementalPCA(n_components=256)
-        self.cluster_model = MiniBatchKMeans(n_clusters=32, random_state=0)
-        self.vectorizer_model = OnlineCountVectorizer(stop_words="english", decay=.01)
-        self.representation_model = {
-            "KeyBERT": KeyBERTInspired(),
-            "MMR": MaximalMarginalRelevance(diversity=0.6)
-
-        }
-        logging.info("-> Default sub-models loaded for categorizer.")
-
-
         
     def predict_category(self, text):
         self.pre_trained_model_name = f"cardiffnlp/tweet-topic-21-multi"
-        self.pre_trained_model = AutoModelForSequenceClassification.from_pretrained(self.pre_trained_model_name)
+        self.pre_trained_model = AutoModelForSequenceClassification.from_pretrained(self.pre_trained_model_name, low_cpu_mem_usage=True)
         self.pre_trained_tokenizer = AutoTokenizer.from_pretrained(self.pre_trained_model_name)
         print(text)
         tokens = self.pre_trained_tokenizer(text, return_tensors='pt')
