@@ -12,6 +12,8 @@ emoji==0.6.0
 datasets==2.14.3
 tensorflow_hub==0.14.0
 tensorflow==2.13.0
+accelerate==0.21.0
+xformers==0.0.20
 # Django
 # ------------------------------------------------------------------------------
 django==4.2.3  # pyup: < 5.0  # https://www.djangoproject.com/

@@ -52,11 +52,9 @@ class HazelTopicModelAgent():
             self.model_type = "2Mil_C4"
 
     def load_sub_models(self):
-        #self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
-        self.embedding_model = make_pipeline(
-                TfidfVectorizer(),
-                TruncatedSVD(100)
-            )   
+        self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
+        #self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder-lite/2")
+ 
         self.umap_model = IncrementalPCA(n_components=256)
         self.cluster_model = MiniBatchKMeans(n_clusters=1024, random_state=0)
         self.vectorizer_model = OnlineCountVectorizer(stop_words="english", decay=.01)
