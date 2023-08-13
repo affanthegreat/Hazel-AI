@@ -22,9 +22,8 @@ from transformers import AutoModelForSequenceClassification, TFAutoModelForSeque
 from transformers import AutoTokenizer
 
 
-from sklearn.pipeline import make_pipeline
-from sklearn.decomposition import TruncatedSVD
-from sklearn.feature_extraction.text import TfidfVectorizer
+
+
 
 class HazelTopicModelAgent():
 
@@ -49,14 +48,13 @@ class HazelTopicModelAgent():
         if use_heavy_model:
             self.model_type = "4Mil_C8_Heavy"
         else:
-            self.model_type = "2Mil_C4"
+            self.model_type = "5Mil_C10_Lite"
 
     def load_sub_models(self):
+        #export TFHUB_CACHE_DIR=$HOME/.cache/tfhub_modules
         self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
-        #self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder-lite/2")
- 
         self.umap_model = IncrementalPCA(n_components=256)
-        self.cluster_model = MiniBatchKMeans(n_clusters=1024, random_state=0)
+        self.cluster_model = MiniBatchKMeans(n_clusters=512, random_state=0)
         self.vectorizer_model = OnlineCountVectorizer(stop_words="english", decay=.01)
         self.representation_model = {
             "KeyBERT": KeyBERTInspired(),
@@ -93,17 +91,6 @@ class HazelTopicModelAgent():
         unclean_output =self.predict_category(text)
         topic_category_id = self.clean_output_pre_trained(unclean_output)
         return topic_category_id
-
-
-    def get_new_model_instance(self):
-
-        topic_model = BERTopic(min_topic_size=60,
-                               embedding_model=self.embedding_model,
-                               vectorizer_model=self.vectorizer_model,
-                               representation_model=self.representation_model,
-                               hdbscan_model=self.cluster_model,
-                               verbose=True)
-        return topic_model
     
     def load_categorizer(self):
         if not self.use_pre_trained:
@@ -120,6 +107,8 @@ class HazelTopicModelAgent():
     
     def load_model(self):
         model_path = f'topic_models/{self.model_type}'
+        print("+++++++++++++++++++++++++++++++++++++")
+        print(model_path)
         if os.path.exists(model_path):
             self.model = BERTopic.load(model_path,embedding_model= self.embedding_model)
             return 100

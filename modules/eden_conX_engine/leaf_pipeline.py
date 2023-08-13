@@ -3,6 +3,7 @@ import logging
 from modules.hazel_AIlib.sentiment_analyser import HazelSentimentAnalyser
 from modules.hazel_AIlib.topic_modeller import HazelTopicModelAgent
 
+import tensorflow as tf
 class CONX_LEAF_ML_Pipeline():
     def meta(self, use_pre_trained):
         self.VERSION = 0.7
@@ -14,7 +15,7 @@ class CONX_LEAF_ML_Pipeline():
         logging.info(f"----------CONX LEAF ML Pipeline (HAZEL-AI) {self.VERSION}----------")
 
     def init_models(self):
-        self.topic_model_agent = HazelTopicModelAgent(use_heavy_model= True)
+        self.topic_model_agent = HazelTopicModelAgent(use_heavy_model= False)
         self.topic_model_agent.load_sub_models()
         self.topic_model_agent.load_model()
 
