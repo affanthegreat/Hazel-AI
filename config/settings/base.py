@@ -105,7 +105,6 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "hazel_ai.users",
     "modules.eden_conX_engine",
-    "modules.eden_experience_engine",
     "modules.hazel_AIlib",
     "modules.hazelcommunicator"
     # Your stuff: custom apps go here

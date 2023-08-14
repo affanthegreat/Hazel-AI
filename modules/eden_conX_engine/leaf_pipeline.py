@@ -16,8 +16,9 @@ class CONX_LEAF_ML_Pipeline():
 
     def init_models(self):
         self.topic_model_agent = HazelTopicModelAgent(use_heavy_model= False)
-        self.topic_model_agent.load_sub_models()
-        self.topic_model_agent.load_model()
+        # self.topic_model_agent.load_sub_models()
+        # self.topic_model_agent.load_model()
+        self.topic_model_agent.use_pretrained_topic_modeller()
 
     def start_topic_modelling(self, text_content):
         clean_document = self.topic_model_agent.pre_process_text(text_content)

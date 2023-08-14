@@ -50,19 +50,9 @@ class HazelTopicModelAgent():
         else:
             self.model_type = "5Mil_C10_Lite"
 
-    def load_sub_models(self):
-        #export TFHUB_CACHE_DIR=$HOME/.cache/tfhub_modules
-        self.embedding_model = tensorflow_hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
-        self.umap_model = IncrementalPCA(n_components=256)
-        self.cluster_model = MiniBatchKMeans(n_clusters=512, random_state=0)
-        self.vectorizer_model = OnlineCountVectorizer(stop_words="english", decay=.01)
-        self.representation_model = {
-            "KeyBERT": KeyBERTInspired(),
-            "MMR": MaximalMarginalRelevance(diversity=0.6)
+    def use_pretrained_topic_modeller(self):
+        self.model = BERTopic.load("MaartenGr/BERTopic_Wikipedia")
 
-        }
-        logging.info("-> Default sub-models loaded. ")
-    
         
     def predict_category(self, text):
         self.pre_trained_model_name = f"cardiffnlp/tweet-topic-21-multi"
