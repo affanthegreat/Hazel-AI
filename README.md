@@ -1,3 +1,5 @@
+#OBSOLETE
+
 # Hazel-AI
 
 Hazel AI contains all the required machine learning models, data stream wrappers for Hazel Core to work with.
