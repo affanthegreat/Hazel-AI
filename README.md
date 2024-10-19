@@ -1,4 +1,4 @@
-# OBSOLETE
+# (OBSOLETE)
 
 # Hazel-AI
 
